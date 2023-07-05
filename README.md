@@ -178,5 +178,89 @@ flag: `EGCERT{Im_H3r3_w4i71n9_T0_X0R!}`
 
 ## Sign Gate
 
-In this challenge you are required to send the signature of "Crypt0N19h7" to a server so you can retrive the flag. First ry connecting to that server using `nc 209.38.200.9 7725` and examine what happen.
+In this challenge, you are required to send the signature of 'Crypt0N19h7' to a server in order to retrieve the flag. First, try connecting to the server using `nc 209.38.200.9 7725` and observe what happens.
+
+You will notice that the server provides two options: signing or verifying a message, and it also gives you a public key. I tried testing it by using 'Ahmed' as a message, but this is the result I obtained.
+
+
 ![Alt Text](images\1.png)
+
+
+But it's okay; you can convert your message to an integer using `bytes_to_long()`. I attempted to reconnect to the server and noticed that I received a new public key. Therefore, a new key pair is generated each time a connection is made. To understand what exactly happens at the server, I tried signing the number '123456789' and received back `c`, which is equal to `pow(m, d, n)`. I verified this by calculating `m` from `pow(c, e, n)`. So, what happens is that the server sends you a public key, and the message is encrypted using the private key associated with that public key. The server then sends back the resulting cipher to you.
+
+
+![Alt Text](images\2.png)
+
+
+Okay, since we need to submit the signature of 'Crypt0N19h7', all we need to do is sign the int() value of this message and then verify it. However, the server was prepared for this action. Also you need to notice that after a small amount of time the connection with the server is closed.
+
+
+![Alt Text](images\5.png)
+
+
+You can bypass the server filter by utilizing the fact that `(d)^e mod n == (d+n)^e` mod n and adding the value you obtained from the server to the message. This allows you to still retrieve the correct signature. Since the connection was closed quickly, it is challenging to sign and verify the message manually. Therefore, you need to automate the process.
+
+
+```
+from Crypto.Util.number import bytes_to_long, long_to_bytes
+import socket
+import time
+
+#m1 = Crypt0N19h7
+message = bytes_to_long(b'Crypt0N19h7')
+
+# Connect to the specified IP address and port
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect(('209.38.200.9', 7725))
+
+# Receive the initial output from the server
+output = sock.recv(4096).decode()
+
+# Find the starting index of the public key tuple and extract it
+start_index = output.find('Public Key:') + len('Public Key:')
+key_str = output[start_index:].strip()
+key_str = key_str[:-2]
+key = eval(key_str)  # Evaluate the string representation of the tuple to get the actual tuple
+print(key)
+
+
+# Send value 1 to the server after a delay of 0.5 seconds
+#I used a delay because I was concerned that a message could be sent before receiving a response from the server. Using a barrier is a safer approach.
+time.sleep(0.5)
+sock.send('1\n'.encode())
+
+
+# Receive the new input from the server
+sig_output = sock.recv(4096).decode()
+print(sig_output)
+
+# Send the value of key[0]+message to the server after a delay of 0.5 seconds
+time.sleep(0.5)
+sock.send((str(key[0]+message) + '\n').encode())
+
+######################################################################
+sig_output = sock.recv(4096).decode()
+print(sig_output)
+# Extract the integer value from the received sig output
+sig = int(''.join(filter(str.isdigit, sig_output)))
+
+# Send value 2 to the server after a delay of 0.5 seconds
+time.sleep(0.5)
+sock.send('2\n'.encode())
+
+
+sig_output = sock.recv(4096).decode()
+print(sig_output)
+
+# Sending the signature
+time.sleep(0.5)
+sock.send((str(sig) + '\n').encode())
+
+
+
+sig_output = sock.recv(4096).decode()
+print("Final  = ",sig_output)
+sock.close()
+```
+
+
