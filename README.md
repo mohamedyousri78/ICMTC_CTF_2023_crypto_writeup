@@ -173,5 +173,10 @@ for i, c in enumerate(out):
 print(fin)
 ```
 
+flag: `EGCERT{Im_H3r3_w4i71n9_T0_X0R!}`
+
 
 ## Sign Gate
+
+In this challenge you are required to send the signature of "Crypt0N19h7" to a server so you can retrive the flag. First ry connecting to that server using `nc 209.38.200.9 7725` and examine what happen.
+![Alt Text](images\1.png)
