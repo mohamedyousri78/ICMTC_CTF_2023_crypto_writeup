@@ -183,19 +183,19 @@ In this challenge, you are required to send the signature of 'Crypt0N19h7' to a 
 You will notice that the server provides two options: signing or verifying a message, and it also gives you a public key. I tried testing it by using 'Ahmed' as a message, but this is the result I obtained.
 
 
-![Alt Text](images\1.png)
+![Alt Text](images/1.png)
 
 
 But it's okay; you can convert your message to an integer using `bytes_to_long()`. I attempted to reconnect to the server and noticed that I received a new public key. Therefore, a new key pair is generated each time a connection is made. To understand what exactly happens at the server, I tried signing the number '123456789' and received back `c`, which is equal to `pow(m, d, n)`. I verified this by calculating `m` from `pow(c, e, n)`. So, what happens is that the server sends you a public key, and the message is encrypted using the private key associated with that public key. The server then sends back the resulting cipher to you.
 
 
-![Alt Text](images\2.png)
+![Alt Text](images/2.png)
 
 
 Okay, since we need to submit the signature of 'Crypt0N19h7', all we need to do is sign the int() value of this message and then verify it. However, the server was prepared for this action. Also you need to notice that after a small amount of time the connection with the server is closed.
 
 
-![Alt Text](images\5.png)
+![Alt Text](images/5.png)
 
 
 You can bypass the server filter by utilizing the fact that `(d)^e mod n == (d+n)^e` mod n and adding the value you obtained from the server to the message. This allows you to still retrieve the correct signature. Since the connection was closed quickly, it is challenging to sign and verify the message manually. Therefore, you need to automate the process.
