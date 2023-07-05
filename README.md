@@ -176,7 +176,7 @@ print(fin)
 flag: `EGCERT{Im_H3r3_w4i71n9_T0_X0R!}`
 
 
-## Sign Gate
+# Sign Gate
 
 In this challenge, you are required to send the signature of 'Crypt0N19h7' to a server in order to retrieve the flag. First, try connecting to the server using `nc 209.38.200.9 7725` and observe what happens.
 
