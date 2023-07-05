@@ -1,6 +1,6 @@
 # ICMTC_CTF_2023_crypto_writeup
 
-## Easy Encryption
+# Easy Encryption
 
 
 You were given this code as the implementation of the cryptosystem, and you need to retrieve the flag.
@@ -137,7 +137,7 @@ flag: `EGCERT{16500bc003f74b4ba6ef9640dfe637596fe3466e5_f7006340}`
 
 
 
-## Simple Cipher
+# Simple Cipher
 
 You were given this code as the implementation of the cryptosystem, and you need to retrieve the flag.
 ```
